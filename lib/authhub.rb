@@ -1,0 +1,2 @@
+module Authhub
+end
