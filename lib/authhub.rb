@@ -1,4 +1,5 @@
 require 'authhub/helper'
 
-module Authhub
+ActionController::Base.class_eval do
+	include Authhub
 end
