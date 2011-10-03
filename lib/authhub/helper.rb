@@ -22,7 +22,8 @@ module Authhub
 			return unless @authhub_user_id.nil?
 			u = "http://#{self.class.authhub_options[:authserver]}/app/" +
 				"#{self.class.authhub_options[:app]}" +
-				"/user.json?token=#{params[:token]}"
+				"/user.json?token=#{params[:token]}" +
+				"&secret=#{self.class.authhub_options[:secret]}"
 			logger.debug "authhub: #{u}"
 			uri = URI.parse(u)
 			user = JSON.parse(Net::HTTP.get(uri))
