@@ -17,7 +17,7 @@ module Authhub
 		def auth_with_authhub
 			@authhub_user_id = session[:authhub_user_id]
 			return unless @authhub_user_id.nil?
-			u = "#{self.class.authhub_options[:server]}/app/" +
+			u = "http://#{self.class.authhub_options[:server]}/app/" +
 				"#{self.class.authhub_options[:app]}" +
 				"/user.json?token=#{params[:token]}"
 			logger.debug "authhub: #{u}"
