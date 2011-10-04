@@ -1,3 +1,6 @@
+require 'net/http'
+require 'json'
+
 module Authhub
 	def self.included(base)
 		base.extend(ClassMethods)
