@@ -34,7 +34,7 @@ module Authhub
 				redirect_to "http://#{self.class.authhub_options[:server]}" +
 					"/apps/users/token?app=#{self.class.authhub_options[:app]}"
 			else
-				@auth_user = session[:authhub_user_id] = user['user']['id']
+				@authhub_user_id = session[:authhub_user_id] = user['user']['id']
 			end
 		end
 	end
