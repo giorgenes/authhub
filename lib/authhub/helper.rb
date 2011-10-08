@@ -23,14 +23,23 @@ module Authhub
 		def auth_with_authhub
 			@authhub_user_id = session[:authhub_user_id]
 			return unless @authhub_user_id.nil?
-			u = "http://#{self.class.authhub_options[:authserver]}/app/" +
-				"#{self.class.authhub_options[:app]}" +
-				"/user.json?token=#{params[:token]}" +
-				"&secret=#{self.class.authhub_options[:secret]}"
-			logger.debug "authhub: #{u}"
-			uri = URI.parse(u)
-			user = JSON.parse(Net::HTTP.get(uri))
-			if user['user'].nil?
+			opts = self.class.authhub_options
+			user = nil
+			token = params[:token]
+			unless token.nil? or token.empty?
+				if opts[:callback] then
+					user = opts[:callback].call(opts[:app], token, opts[:secret])
+				else
+					u = "http://#{opts[:authserver]}/app/" +
+						"#{opts[:app]}" +
+						"/user.json?token=#{token}" +
+						"&secret=#{opts[:secret]}"
+					logger.debug "authhub: #{u}"
+					uri = URI.parse(u)
+					user = JSON.parse(Net::HTTP.get(uri))
+				end
+			end
+			if user.nil? or user['user'].nil?
 				redirect_to "http://#{self.class.authhub_options[:server]}" +
 					"/apps/users/token?app=#{self.class.authhub_options[:app]}"
 			else
