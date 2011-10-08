@@ -15,7 +15,7 @@ module Authhub
 				:app => app}
 			self.authhub_options.merge!(options)
 			send :include, InstanceMethods
-			before_filter :auth_with_authhub
+			prepend_before_filter :auth_with_authhub
 		end
 	end
 
