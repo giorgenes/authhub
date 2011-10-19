@@ -21,10 +21,15 @@ module Authhub
 
 	module InstanceMethods
 		def auth_with_authhub
-			@authhub_user_id = session[:authhub_user_id]
+      @authhub_user_id = session[:authhub_user_id]
 			return unless @authhub_user_id.nil?
 			opts = self.class.authhub_options
-			user = nil
+			if opts[:test]
+        @authhub_user_id = 1
+        return
+      end
+      
+      user = nil
 			token = params[:token]
 			unless token.nil? or token.empty?
 				if opts[:callback] then
@@ -39,7 +44,8 @@ module Authhub
 					user = JSON.parse(Net::HTTP.get(uri))
 				end
 			end
-			if user.nil? or user['user'].nil?
+			logger.debug user
+      if user.nil? or user['user'].nil?
 				redirect_to "http://#{self.class.authhub_options[:server]}" +
 					"/users/token?app=#{self.class.authhub_options[:app]}"
 			else
