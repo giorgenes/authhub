@@ -19,38 +19,38 @@ module Authhub
 		end
 	end
 
-	module InstanceMethods
-		def auth_with_authhub
-      @authhub_user_id = session[:authhub_user_id]
-			return unless @authhub_user_id.nil?
-			opts = self.class.authhub_options
-			if opts[:test]
-        @authhub_user_id = 1
-        return
-      end
-      
-      user = nil
-			token = params[:token]
-			unless token.nil? or token.empty?
-				if opts[:callback] then
-					user = opts[:callback].call(opts[:app], token, opts[:secret])
-				else
-					u = "http://#{opts[:authserver]}/app/" +
-						"#{opts[:app]}" +
-						"/user.json?token=#{token}" +
-						"&secret=#{opts[:secret]}"
-					logger.debug "authhub: #{u}"
-					uri = URI.parse(u)
-					user = JSON.parse(Net::HTTP.get(uri))
-				end
-			end
-			logger.debug user
-      if user.nil? or user['user'].nil?
-				redirect_to "http://#{self.class.authhub_options[:server]}" +
-					"/user/token?app=#{self.class.authhub_options[:app]}"
-			else
-				@authhub_user_id = session[:authhub_user_id] = user['user']['id']
-			end
-		end
-	end
+   module InstanceMethods
+     def auth_with_authhub
+       @authhub_user_id = session[:authhub_user_id]
+       return unless @authhub_user_id.nil?
+       opts = self.class.authhub_options
+       if opts[:test]
+         @authhub_user_id = 1
+         return
+       end
+
+       user = nil
+       token = params[:token]
+       unless token.nil? or token.empty?
+         if opts[:callback] then
+           user = opts[:callback].call(opts[:app], token, opts[:secret])
+         else
+           u = "http://#{opts[:authserver]}/app/" +
+           "#{opts[:app]}" +
+           "/user.json?token=#{token}" +
+           "&secret=#{opts[:secret]}"
+           logger.debug "authhub: #{u}"
+           uri = URI.parse(u)
+           user = JSON.parse(Net::HTTP.get(uri))
+         end
+       end
+       logger.debug user
+       if user.nil?
+         redirect_to "http://#{self.class.authhub_options[:server]}" +
+         "/user/token?app=#{self.class.authhub_options[:app]}"
+       else
+         @authhub_user_id = session[:authhub_user_id] = user['id']
+       end
+     end
+   end
 end
