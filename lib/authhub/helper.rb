@@ -21,11 +21,11 @@ module Authhub
 
    module InstanceMethods
      def auth_with_authhub
-       @authhub_user_id = session[:authhub_user_id]
-       return unless @authhub_user_id.nil?
+       @authhub_user = session[:authhub_user]
+       return unless @authhub_user.nil?
        opts = self.class.authhub_options
        if opts[:test]
-         @authhub_user_id = 1
+         @authhub_user = { 'id' => 1, 'email' => 'test@test.com'}
          return
        end
 
@@ -49,7 +49,7 @@ module Authhub
          redirect_to "http://#{self.class.authhub_options[:server]}" +
          "/user/token?app=#{self.class.authhub_options[:app]}"
        else
-         @authhub_user_id = session[:authhub_user_id] = user['id']
+         @authhub_user = session[:authhub_user] = user
        end
      end
    end
